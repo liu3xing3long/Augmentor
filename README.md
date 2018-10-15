@@ -2,12 +2,12 @@
 
 Augmentor is an image augmentation library in Python for machine learning. It aims to be a standalone library that is platform and framework independent, which is more convenient, allows for finer grained control over augmentation, and implements the most real-world relevant augmentation techniques. It employs a stochastic approach using building blocks that allow for operations to be pieced together in a pipeline.
 
-[![PyPI](https://img.shields.io/badge/Augmentor-v0.2.2-blue.svg?maxAge=2592000)](https://pypi.python.org/pypi/Augmentor)
+[![PyPI](https://img.shields.io/badge/Augmentor-v0.2.3-blue.svg?maxAge=2592000)](https://pypi.python.org/pypi/Augmentor)
+[![Supported Python Versions](https://img.shields.io/badge/python-2.7%20%7C%203.3%20%7C%203.4%20%7C%203.5%20%7C%203.6-blue.svg)](https://pypi.python.org/pypi/Augmentor)
 [![Documentation Status](https://readthedocs.org/projects/augmentor/badge/?version=master)](https://augmentor.readthedocs.io/en/master/?badge=master)
 [![Build Status](https://travis-ci.org/mdbloice/Augmentor.svg?branch=master)](https://travis-ci.org/mdbloice/Augmentor)
 [![License](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](LICENSE.md)
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
-[![Supported Python Versions](https://img.shields.io/badge/python-2.7%2C%203.3--3.6-blue.svg)](https://pypi.python.org/pypi/Augmentor)
 [![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/4QuantOSS/Augmentor/master)
 
 ## Installation
@@ -99,6 +99,31 @@ p.zoom_random(probability=0.5, percentage_area=0.8)
 p.flip_top_bottom(probability=0.5)
 p.sample(50)
 ```
+
+### Multiple Mask/Image Augmentation
+
+Using the `DataPipeline` class (Augmentor version >= 0.2.3), images that have multiple associated masks can be augmented:
+
+| Multiple Mask Augmentation                                                                               |
+|----------------------------------------------------------------------------------------------------------|
+| ![MultipleMask](https://github.com/mdbloice/AugmentorFiles/blob/master/UsageGuide/merged-multi-mask.gif) |
+
+Arbitrarily long lists of images can be passed through the pipeline in groups and augmented identically using the `DataPipeline` class. This is useful for ground truth images that have several masks, for example.
+
+In the example below, the images and their masks are contained in the `images` data structure (as lists of lists), while their labels are contained in `y`:
+
+```python
+p = Augmentor.DataPipeline(images, y)
+p.rotate(1, max_left_rotation=5, max_right_rotation=5)
+p.flip_top_bottom(0.5)
+p.zoom_random(1, percentage_area=0.5)
+
+augmented_images, labels = p.sample(100)
+```
+
+The `DataPipeline` returns images directly (`augmented_images` above), and does not save them to disk, nor does it read data from the disk. Images are passed directly to `DataPipeline` during initialisation.
+
+For details of the `images` data structure and how to create it, see the [`Multiple-Mask-Augmentation.ipynb`](https://github.com/mdbloice/Augmentor/blob/master/notebooks/Multiple-Mask-Augmentation.ipynb) Jupyter notebook.
 
 ### Generators for Keras and PyTorch
 
